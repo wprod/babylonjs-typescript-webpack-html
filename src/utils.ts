@@ -2,6 +2,8 @@ import * as BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
 import {FurMaterial} from 'babylonjs-materials';
 import {Observable} from 'rxjs';
+import StandardMaterial = BABYLON.StandardMaterial;
+import Color3 = BABYLON.Color3;
 
 export class Utils {
 
@@ -23,25 +25,11 @@ export class Utils {
             false,
             () => {
 
-                const furMaterial = new FurMaterial("fur", scene);
-                furMaterial.highLevelFur = true;
-                furMaterial.furLength = 10;
-                furMaterial.furAngle = 0;
-                furMaterial.diffuseTexture = new BABYLON.Texture("https://images.unsplash.com/photo-1516642898673-edd1ced08e87?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ", scene);
-                furMaterial.furTexture = FurMaterial.GenerateTexture("furTexture", scene);
-                furMaterial.furColor = new BABYLON.Color3(1, 1, 1);
-                furMaterial.furSpacing = 6;
-                furMaterial.furDensity = 10;
-                furMaterial.furSpeed = 1000;
-                furMaterial.furGravity = new BABYLON.Vector3(0, -1, 0);
-
-                ground.material = furMaterial;
-
-                var shells = FurMaterial.FurifyMesh(ground, 5);
-
+                const material = new StandardMaterial("fur", scene);
+                material.ambientColor = new Color3(1, 1, 1);
+                ground.material = material;
                 ground.checkCollisions = true;
             });
-
 
 
         ground.position.y = -100;
@@ -49,18 +37,11 @@ export class Utils {
         return ground;
     }
 
-    static createTank(scene) {
-        const tankMesh = BABYLON.MeshBuilder.CreateBox('Tank_1', {height: 2, depth: 3, width: 5}, scene);
-        tankMesh.enableEdgesRendering();
-        tankMesh.edgesWidth = 4;
-        tankMesh.edgesColor = new BABYLON.Color4(.8,.0,.6, 1.);
+    static createStatus(scene) {
 
-        const tankMaterial = new BABYLON.StandardMaterial('TankMaterial', scene);
-        tankMaterial.diffuseColor = BABYLON.Color3.Red();
-        tankMesh.material = tankMaterial;
-        tankMesh.position.y += 2;
-
-        return tankMesh;
+        this.createMeshFromObjFile('mesh', 'statue.obj', scene).subscribe(mesh => {
+            return mesh;
+        });
     }
 
     static createFollowCamera() {
@@ -125,7 +106,7 @@ export class Utils {
             rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(0, 0, 0);
         }
 
-        const assetsFolder = `./assets/${folderName}`;
+        const assetsFolder = `./assets/${folderName}/`;
 
         return new Observable(observer => {
             BABYLON.SceneLoader.ImportMesh(null, assetsFolder, fileName, scene,
@@ -137,6 +118,7 @@ export class Utils {
                         mesh.rotationQuaternion = rotationQuaternion;
                         mesh.scaling = scaling;
                     });
+                    console.log(meshes);
                     console.log(`Imported Mesh: ${fileName}`);
                     observer.next(meshes);
                 });

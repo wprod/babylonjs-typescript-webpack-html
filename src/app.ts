@@ -29,7 +29,7 @@ export class App {
         // creates the sandy ground
         Utils.createGround(this._scene);
 
-        Utils.createTank(this._scene);
+        Utils.createStatus(this._scene);
 
         // Physics engine also works
         const gravity = new BABYLON.Vector3(0, -0.9, 0);
@@ -70,12 +70,8 @@ export class App {
      * Starts the animation loop.
      */
     animate(): void {
-        const tank = this._scene.getMeshByName('Tank_1');
-
-
         // run the render loop
         this._engine.runRenderLoop(() => {
-            tank.position.z -= .1;
             this._scene.render();
         });
 
